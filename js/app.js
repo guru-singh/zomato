@@ -104,6 +104,7 @@ function listCuisines(cityID, cityName, prevEl) {
 /**
  * set the window title
  * @param {string} title update the window title with give params
+ * just added
  */
 function setDocumentTitle(title){
 	$(document).prop('title', title);
