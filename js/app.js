@@ -79,15 +79,34 @@ function listCitiesToPage(lists)
 
 	$.each(lists,function(i,list) {
 		//a = $('<a>', {href: '/'+list.name}).appendTo(ul);
-		let a = $('<a >', {onClick: 'listCuisines('+ list.id +', cityList)'}).appendTo(ul);
+		//
+		let a = $('<a >', {onClick: 'listCuisines('+ list.id +', "'+ list.name +'", cityList)'}).appendTo(ul);
 		$('<li>',{text:list.name, class:"text"}).appendTo(a);
 		
     	//
 	});
 }
 
-
-function listCuisines(cityID, prevEl) {
+/**
+ * [listCuisines description]
+ * @param  {[type]} cityID   [description]
+ * @param  {[type]} cityName [description]
+ * @param  {[type]} prevEl   [description]
+ * @return {[type]}          [description]
+ */
+function listCuisines(cityID, cityName, prevEl) {
 	$('#cityList').hide("slide");
+	this.setDocumentTitle(cityName);
 }
+
+
+
+/**
+ * set the window title
+ * @param {string} title update the window title with give params
+ */
+function setDocumentTitle(title){
+	$(document).prop('title', title);
+}
+
 
