@@ -6,98 +6,13 @@
  Mumbai = 3;
  NewYork = 0;
  Nottingham = 0;
-
-/**
- * @param  {[type]}
- * @return {[type]}
- */
-function globalAjax(API){
-
-	let url = 'https://developers.zomato.com/api/v2.1/'+API+"?q=NewYork&count=20"
-	$.ajax({
-  		type: "GET",
-  		headers: {
-        	'user-key': APIKey,
-        	'Content-Type':'application/json'
-    	},
-  		url: url,
-  		data: "json=somedata",
-  		processData: false,
-  		success: function(msg) {
-  			parseResponse(API, msg);
-  		},
-  		failure:function(msg) {
-			alert('failure')
-  		}
-	});
-}
+ Blank  = 'blank';
+ baseUrl = 'https://developers.zomato.com/api/v2.1/';
 
 
 $( document ).ready(function() {
     listCities();
 });
-
-
-function listCities(){
-	let me = this;
-	globalAjax('cities');
-	
-
-}
-/**
- * [parseResponse description]
- * @param  {[type]} API         [description]
- * @param  {[type]} responseMsg [description]
- * @return {[type]}             [description]
- */
-function parseResponse(API, responseMsg){
-	let response = responseMsg,
-		locations  =response.location_suggestions
-	;
-	switch(API){
-		case 'cities':
-			//console.log('call list cities');
-			listCitiesToPage(locations);
-		break;
-		default:
-			console.log('call default');
-		break;
-	}
-	if(response.status === 'success') {
-		$.each(locations, function(i, location) {
-    		//console.log(location.name);
-    		
-		})
-	}
-
-}
-
-
-function listCitiesToPage(lists)
-{
-	let ul = $('#cityList');
-
-	$.each(lists,function(i,list) {
-		//a = $('<a>', {href: '/'+list.name}).appendTo(ul);
-		//
-		let a = $('<a >', {onClick: 'listCuisines('+ list.id +', "'+ list.name +'", cityList)'}).appendTo(ul);
-		$('<li>',{text:list.name, class:"text"}).appendTo(a);
-		
-    	//
-	});
-}
-
-/**
- * [listCuisines description]
- * @param  {[type]} cityID   [description]
- * @param  {[type]} cityName [description]
- * @param  {[type]} prevEl   [description]
- * @return {[type]}          [description]
- */
-function listCuisines(cityID, cityName, prevEl) {
-	$('#cityList').hide("slide");
-	this.setDocumentTitle(cityName);
-}
 
 
 
@@ -111,3 +26,124 @@ function setDocumentTitle(title){
 }
 
 
+
+function listCities(){
+	let me = this;
+	let url = baseUrl + 'cities?q=NewYork&count=20'
+	globalAjax(url, 'listCity');
+	
+
+}
+
+
+function listCitiesToPage(lists)
+{
+	let ul = $('#cityList');
+
+	$.each(lists,function(i,list) {
+		//a = $('<a>', {href: '/'+list.name}).appendTo(ul);
+		//
+		let a = $('<a >', {onClick: 'listCuisines('+ list.id +', "'+ list.name +'", cityList)'}).appendTo(ul);
+		$('<li>',{text:list.name, class:"text"}).appendTo(a);
+   	
+	});
+}
+
+/**
+ * [listCuisinesToPage description]
+ * @param  {[type]} obj [description]
+ * @return {[type]}     [description]
+ */
+function listCuisinesToPage(lists) {
+	let ul = $('#cuisinesList'),
+	cuisine = ''
+	;
+	$.each(lists,function(i,list) {
+	cuisine = list.cuisine;
+			let a = $('<a >', {onClick: 'listCuisines('+ cuisine.cuisine_id +', "'+ cuisine.cuisine_name +'", cityList)'}).appendTo(ul);
+		$('<li>',{text:cuisine.cuisine_name, class:"text"}).appendTo(a);
+	});
+
+
+}
+
+/**
+ * [listCuisines description]
+ * @param  {[type]} cityID   [description]
+ * @param  {[type]} cityName [description]
+ * @param  {[type]} prevEl   [description]
+ * @return {[type]}          [description]
+ */
+function listCuisines(cityID, cityName, prevEl) {
+	$('#cityList').hide("slide");
+	this.setDocumentTitle(cityName);
+	let url = baseUrl + 'cuisines?city_id='+ cityID +'&lat=&lon=&count=20';
+	globalAjax(url, 'listCuisines', cityID);
+
+}
+
+
+
+
+
+/**
+ * @param  {[type]}
+ * @return {[type]}
+ */
+function globalAjax(URL, event	){
+
+	
+	$.ajax({
+  		type: "post",
+  		headers: {
+        	'user-key': APIKey,
+        	'Content-Type':'application/json'
+    	},
+  		url: URL,
+  		data: "json=somedata",
+  		processData: false,
+  		success: function(msg) {
+  			parseResponse(event, msg);
+  		},
+  		failure:function(msg) {
+			alert('failure')
+  		}
+	});
+}
+
+
+/**
+ * [parseResponse description]
+ * @param  {[type]} API         [description]
+ * @param  {[type]} responseMsg [description]
+ * @return {[type]}             [description]
+ */
+function parseResponse( event, responseMsg){
+	let response = responseMsg,
+	obj
+
+	;
+	switch(event){
+		case 'listCity':
+			//console.log('call list cities');
+			obj = response.location_suggestions;
+			listCitiesToPage(obj);
+		break;
+		case 'listCuisines':
+			obj = response.cuisines;
+			listCuisinesToPage(obj);
+			console.log('call list Cuisines');
+		break;
+		default:
+			console.log('call default');
+		break;
+	}
+	
+	// if(response.status === 'success') {
+	// 	$.each(locations, function(i, location) {
+ //    		//console.log(location.name);
+    		
+	// 	})
+	// }
+
+}
