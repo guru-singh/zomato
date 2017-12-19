@@ -12,6 +12,7 @@
 
 $( document ).ready(function() {
     listCities();
+ // listCollections();
 });
 
 
@@ -41,9 +42,8 @@ function listCitiesToPage(lists)
 	let ul = $('#cityList');
 
 	$.each(lists,function(i,list) {
-		//a = $('<a>', {href: '/'+list.name}).appendTo(ul);
-		//
-		let a = $('<a >', {onClick: 'listCuisines('+ list.id +', "'+ list.name +'", cityList)'}).appendTo(ul);
+		//let a = $('<a >', {onClick: 'listCuisines('+ list.id +', "'+ list.name +'", cityList)'}).appendTo(ul);
+		let a = $('<a >', {onClick: 'listCollections('+ list.id +', "'+ list.name +'")'}).appendTo(ul);
 		$('<li>',{text:list.name, class:"text"}).appendTo(a);
    	
 	});
@@ -65,6 +65,35 @@ function listCuisinesToPage(lists) {
 	});
 
 
+}
+
+
+function listCollectionToPage(lists){
+	let ul = $('#cityCollection'),
+	collection = '',
+	collectionData = {}
+	;
+
+	$.each(lists,function(i,list) {
+	collection = list.collection;
+	if(i % 2 === 0 ) {
+		div = $('<div class="container">').appendTo(ul);
+	}
+	// collectionData = {
+	// 	text : collection.title,
+	// 	class : 'text col-md-6'
+	// } 
+	//span = $('<span>',collectionData).appendTo(div);
+	span = $('<span>', {class : 'text col-md-6 px-2'}).appendTo(div);
+	$('<p>', {text: collection.title}).appendTo(span);
+	$('<img>', {src: collection.image_url}).appendTo(span);
+	$('<p>', {text: collection.description}).appendTo(span);
+	
+
+
+	//		let a = $('<a >', {onClick: 'listCuisines('+ collection.cuisine_id +', "'+ collection.cuisine_name +'", cityList)'}).appendTo(ul);
+		//$('<span >',{text:collection.title, class:"text"}).appendTo(ul);
+	});
 }
 
 /**
@@ -134,6 +163,12 @@ function parseResponse( event, responseMsg){
 			listCuisinesToPage(obj);
 			console.log('call list Cuisines');
 		break;
+		case 'listCityCollections':
+			obj = response.collections;
+			console.log(response);
+			listCollectionToPage(obj);
+			console.log('call list City Collections');
+		break;
 		default:
 			console.log('call default');
 		break;
@@ -149,4 +184,19 @@ function parseResponse( event, responseMsg){
 }
 
 
-/*eof*/
+function ListLocations(){
+
+		let url = baseUrl + '/location_details?entity_id=36932&entity_type=group&count=20';
+	globalAjax(url, 'listCuisines', cityID);
+
+}
+
+function listCollections(cityId, cityname, ){
+	
+	let url = baseUrl + 'collections?city_id='+ cityId;
+	globalAjax(url, 'listCityCollections');
+
+}
+
+
+/*eof*/	
